@@ -50,7 +50,19 @@ class Reflexion(NaiveAct):
         #         messages.append({"role": "system", "name": "example_user", "content": examples['question']})
         #         messages.append({"role": "system", "name": "example_assistant", "content": examples['answer']})
 
-
+        # 处理游戏manual
+        # prompt level 6: game manual
+        if self.args.prompt_level == 6:
+            manual_prompt = f"You are in a game. {game_description}\n {goal_description} \n\n This is the game manual for this game. You need to read it carefully and understand the content and play strategies of the game: \n\n\n {self.game_manual}"
+            messages.append({"role": "system", "name":"example_user",  "content": manual_prompt})
+        # 处理RL traj
+        # prompt level 7: game manual
+        if self.args.prompt_level == 7:
+            formatted_list = [f"[{item}]" for item in self.language_traj_list]
+            traj_str =  "\n".join(formatted_list)
+            traj_prompt = f"You are in a game. {game_description}\n {goal_description} \n\nThis is the trajectory of playing this game using the RL algorithm. Please read these trajectories carefully and refer to these trajectories to make decisions during the game play:\n\n\n {traj_str} "
+            messages.append({"role": "system", "name":"example_user",  "content": traj_prompt})
+            
         if self.prompt_level in [2, 3, 4]:
             if self.memory:
                 if self.prompt_level == 2:

@@ -13,6 +13,8 @@ from memory.env_history import EnvironmentHistory
 import tiktoken
 import json
 import re
+import pandas as pd
+import pickle
 from openai import OpenAI
 from .utils import run_chain, get_chat, num_tokens_from_string
 from gym.spaces import Discrete
@@ -40,6 +42,14 @@ class NaiveAct(gpt):
         self.cum_token_usage = 0
         self.cum_cost_usage = 0
         self.prompt_level = args.prompt_level
+        # load manual 
+        manual_data = pd.read_csv(args.base_path + 'manual/game_manual_new.csv')
+        self.game_manual = manual_data.loc[manual_data['Name'] == args.manual_name, 'Website'].values[0]
+
+        # load language traj
+        with open(args.base_path + 'language_traj/' + args.traj_path, 'rb') as f:
+            self.language_traj_list = pickle.load(f)
+
         if args.gpt_version == "gpt-35-turbo":
             self.model = "gpt-3.5-turbo"
         else:
@@ -67,10 +77,10 @@ class NaiveAct(gpt):
                 azure_endpoint=openai.azure_endpoint,
             )
         elif self.args.api_type == "openai":
-            self.chat = ChatOpenAI(temperature=self.temperature, base_url=openai.api_base, openai_api_key=openai.api_key, model=self.args.gpt_version)
+            self.chat = ChatOpenAI(temperature=self.temperature, base_url=openai.base_url, openai_api_key=openai.api_key, model=self.args.gpt_version)
             self.client =  OpenAI(
                 api_key=openai.api_key,
-                base_url=openai.api_base,
+                base_url=openai.base_url,
             )
         elif self.args.api_type == "nvidia":
             self.client = OpenAI(
@@ -108,6 +118,9 @@ class NaiveAct(gpt):
             qianfan.get_config().AK = openai.qianfan_ak
             qianfan.get_config().SK = openai.qianfan_sk
             self.client = qianfan.ChatCompletion(model=self.args.gpt_version)
+        elif self.args.api_type == "llama":
+            self.client = OpenAI(base_url='http://localhost:11434/v1',api_key='ollama')
+
         self.distiller = distiller
         self.fewshot_example_initialization(args.prompt_level, args.prompt_path, distiller = self.distiller)
         if isinstance(self.action_space, Discrete):
@@ -120,6 +133,8 @@ class NaiveAct(gpt):
         self.env_history = EnvironmentHistory()
         self.first_call = True
         self.logger = logger
+
+
         if self.prompt_level in [2, 4]: 
             self.memory = self.summarized_fewshot_example
         if args.use_short_mem == 1: 
@@ -128,7 +143,7 @@ class NaiveAct(gpt):
         else:
             self.use_short_mem = False
             self.mem_num = 0
-    
+        
     def change_key(self,):
         if self.args.api_type == "qwen":
             for key in openai.key_lst:
@@ -213,6 +228,8 @@ class NaiveAct(gpt):
             autofixing_chat = ChatGroq(groq_api_key=openai.api_key, temperature=self.temperature, model=self.args.gpt_version)
         elif self.args.api_type == "aistudio":
             autofixing_chat = QianfanChatEndpoint(temperature=max(self.temperature, 1e-5), model=self.args.gpt_version, qianfan_ak=openai.qianfan_ak, qianfan_sk=openai.qianfan_sk)
+        elif self.args.api_type == "llama":
+            autofixing_chat = ChatOpenAI(base_url='http://localhost:11434/v1',api_key='ollama',model='llama3.1')
         parser = PydanticOutputParser(pydantic_object=PARSERS[num_action])
         autofixing_parser = OutputFixingParser.from_llm(
             llm=autofixing_chat, parser=parser)
@@ -223,7 +240,7 @@ class NaiveAct(gpt):
         self.irr_few_shot_examples = []
         self.prompt_level = level
         self.expert_knowledge = None
-        if level in [1,3]:
+        if level in [1,3,6,7]:
             self.irr_few_shot_examples = self.prompts.TASK_IRRELEVANT_PROMPTS
         elif level == 5:
             if hasattr(self.prompts, "expert_prompt"):
@@ -242,7 +259,7 @@ class NaiveAct(gpt):
                     traj_text += transition['observation']
                     traj_text += f"> {transition['action']}"
                     traj_text += f"{transition.get('reward','')}\n"
-                    one_traj_token = self.num_tokens_from_string(traj_text)
+                    one_traj_token = num_tokens_from_string(traj_text)
                     if one_traj_token > self.args.max_query_tokens:
                         max_step_num = i+1
                         break
@@ -258,7 +275,8 @@ class NaiveAct(gpt):
         for my_msg in fewshot_examples:
             messages.append(my_msg)
         messages.append({"role": "user", "content": f"{state_description}.{action_description}\n{instruction}"})
-    
+
+        self.logger.info(f"prompt: {messages}")
         res, usage = get_chat(self.client, messages, api_type=self.args.api_type, model=self.args.gpt_version, temperature=self.temperature, max_tokens=self.max_generate_tokens, seed=self.seed)
         return messages, res, usage
     
@@ -283,6 +301,20 @@ class NaiveAct(gpt):
             self.logger = logger.add(logfile, colorize=True, enqueue=True)
         
         example_messages = []
+
+        # 处理游戏manual
+        # prompt level 6: game manual
+        if self.args.prompt_level == 6:
+            manual_prompt = f"You are in a game. {game_description}\n {goal_description} \n\n This is the game manual for this game. You need to read it carefully and understand the content and play strategies of the game: \n\n\n {self.game_manual}"
+            example_messages.append({"role": "system", "name":"example_user",  "content": manual_prompt})
+        # 处理RL traj
+        # prompt level 7: RL traj
+        if self.args.prompt_level == 7:
+            formatted_list = [f"[{item}]" for item in self.language_traj_list]
+            traj_str =  "\n".join(formatted_list)
+            traj_prompt = f"You are in a game. {game_description}\n {goal_description} \n\nThis is the trajectory of playing this game using the RL algorithm. Please read these trajectories carefully and refer to these trajectories to make decisions during the game play:\n\n\n {traj_str} "
+            example_messages.append({"role": "system", "name":"example_user",  "content": traj_prompt})
+    
         if self.args.prompt_level == 5:    
             if self.fewshot_example:
                 for examples in self.fewshot_example:

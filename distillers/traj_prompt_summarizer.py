@@ -8,7 +8,7 @@ class TrajPromptSummarizer():
     def __init__(self,args=None,logfile=None):
         self.args = args
         self.seed = args.seed
-        with open("./distillers/traj_summary_few_shot_examples.txt", 'r') as f:
+        with open("/home/wudi/Text-Gym-Agents-master/distillers/traj_summary_few_shot_examples.txt", 'r') as f:
             self.FEW_SHOT_EXAMPLES = f.read()
         
         if logfile:
@@ -72,7 +72,7 @@ class TrajPromptSummarizer():
             reflection_messages = self._generate_summary_query(traj_lst, memory[-max_len_mem:], game_description, goal_description, action_description)
         else:
             reflection_messages = self._generate_summary_query(traj_lst, memory, game_description, goal_description, action_description)
-        reflection, relfexion_usage = get_chat(client, reflection_messages, api_type=self.args.api_type, seed=self.seed, model=self.args.gpt_version, )
+        reflection, relfexion_usage = get_chat(client, reflection_messages, api_type=self.args.api_type, seed=self.seed )
         logger.info(f'[Traj Summary Memory]The summary prompt is: {reflection_messages}.')
         logger.info(f'[Traj Summary Memory]The summary response is: {reflection}.')
         logger.info(f'[Traj Summary Memory]The summary usage is: {relfexion_usage}.')

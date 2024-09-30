@@ -24,9 +24,11 @@ class GPTTest(gpt):
             api_key=openai.api_key,
             base_url=openai.base_url,
         )
-        prompt = "Hello"
+        prompt = "你是谁"
+        message = [{"role": "user", "content": prompt}]
         print(f"prompt is {prompt}")
-        res = get_chat(client, prompt, api_type=args.api_type, model=model, temperature=1.0, max_tokens=256)
+        res = get_chat(client, message, api_type=args.api_type, model=model, temperature=1.0, max_tokens=256)
+        print(res)
 
 parser = argparse.ArgumentParser(
         description="Evaluate a translator in a gym environment with a ChatGPT model."

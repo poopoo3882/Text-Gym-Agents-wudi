@@ -1,4 +1,5 @@
 import argparse
+import csv
 import envs
 import deciders
 import distillers
@@ -45,10 +46,11 @@ def save_frames_as_gif(frames, path="./", filename="gym_animation.gif"):
 
 
 def evaluate_translator(translator, environment, decider, max_episode_len, logfile, args):
+    # 获取实验开始时间
+    start_time = time.time()
+    start_datetime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
     utilities = []
-    # df = pd.read_csv('record_reflexion.csv', sep=',')
-    # filtered_df = df[(df['env'] == args.env_name) & (df['decider'] == 'expert') & (df['level'] == 1)]
-    # expert_score = filtered_df['avg_score'].item()
     seeds = [i for i in range(1000)]
     # prompt_file = "prompt.txt"
     # f = open(prompt_file,"w+")
@@ -73,6 +75,25 @@ def evaluate_translator(translator, environment, decider, max_episode_len, logfi
                 else:
                     decider.update_mem() 
         decider.clear_mem()
+    
+    # 计算运行时长
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    elapsed_time = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
+    experiment_name = f'{args.env_name}-{args.decider}-prompt_level{args.prompt_level}-{args.max_episode_len}'
+    
+
+    # 记录结果到 result.csv 文件
+    result_row = [
+        experiment_name,       # 实验id
+        utilities,             # 实验结果
+        start_datetime,        # 实验开始时间
+        elapsed_time           # 实验运行时长
+    ]
+
+    with open('result.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(result_row)
     return utilities            
 
 def _run(translator, environment, decider, max_episode_len, logfile, args, trail, seed):
@@ -261,6 +282,7 @@ if __name__ == "__main__":
         default="traj_distiller",
         help="The distiller used to generate a few shot examples from traj",
     )
+    
     parser.add_argument(
         "--prompt_path",
         type=str,
@@ -307,7 +329,7 @@ if __name__ == "__main__":
         "--api_type",
         type=str,
         default="openai",
-        choices=["azure", "openai", "vllm", "qwen", "aistudio", "groq", "nvidia"],
+        choices=["azure", "openai", "vllm", "qwen", "aistudio", "groq", "nvidia", "llama"],
         help="choose api type, now support azure and openai"
     )
     parser.add_argument(
@@ -322,6 +344,24 @@ if __name__ == "__main__":
         default=8000,
         help="the api port of vllm"
     )
+    parser.add_argument(
+        "--manual_name",
+        type=str,
+        default='Pong',
+        help="the name of manual(prompt level 6)"
+    )
+    parser.add_argument(
+        "--traj_path",
+        type=str,
+        default='pong_language_traj_0912.pkl',
+        help="the path of language traj (prompt level 7)"
+    )
+    parser.add_argument(
+        "--base_path",
+        type=str,
+        default='/home/wudi/Text-Gym-Agents-master/',
+        help="the absoulte path of root directory"
+    )
     
     args = parser.parse_args()
     
@@ -329,7 +369,7 @@ if __name__ == "__main__":
     if args.api_type == "azure":
         if args.gpt_version == "gpt-3.5-turbo":
             args.gpt_version = 'gpt-35-turbo'
-    elif args.api_type == "openai":
+    elif args.api_type in ["openai",'llama']:
         if args.gpt_version == "gpt-35-turbo":
             args.gpt_version = 'gpt-3.5-turbo'
 

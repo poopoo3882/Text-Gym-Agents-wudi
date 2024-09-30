@@ -97,7 +97,6 @@ dependencies:
       - anyio==3.7.1
       - appdirs==1.4.4
       - aquarel==0.0.5
-      - atariari==0.0.1
       - attrs==23.1.0
       - autorom==0.4.2
       - autorom-accept-rom-license==0.6.1
@@ -264,3 +263,4 @@ dependencies:
       - xformers==0.0.23.post1
       - yarl==1.9.2
       - zipp==3.15.0
+      - git+ssh://git@github.com/hyyh28/atari-representation-learning.git

@@ -7,6 +7,7 @@ from tenacity import (
     stop_after_attempt, # type: ignore
     wait_random_exponential, # type: ignore
 )
+from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
 def preprocess_messages(messages):
     ori_msg_cnt = 1
@@ -212,6 +213,13 @@ def get_chat(client, messages: list, api_type: str = "azure", model: str = "gpt-
                 temperature=temperature,
                 # extra_body={"guided_json": True,}
             )
+    elif api_type in ['llama']:
+        llm = ChatOpenAI(base_url='http://localhost:11434/v1',api_key='ollama',model='llama3.1')
+        usage={'token': 0, 'cost': 0}
+        response = llm.invoke(messages)
+        response=response.content
+        return response, usage
+
     usgae = response.usage
     total_token, cost = openai_api_calculate_cost(usgae, model)
     return response.choices[0].message.content, {"token": total_token, "cost": cost}
