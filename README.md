@@ -1,4 +1,4 @@
-# Bench LLM Deciders with gym translators 
+# Bench LLM Deciders with gym translators (Forked by Wudi)
 This project provides a set of translators to convert OpenAI Gym environments into text-based environments. It is designed to investigate the capabilities of large language models in decision-making tasks within these text-based environments.
 
 ## Summarizer Levels
