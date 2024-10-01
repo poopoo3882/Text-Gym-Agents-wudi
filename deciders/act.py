@@ -119,7 +119,23 @@ class NaiveAct(gpt):
             qianfan.get_config().SK = openai.qianfan_sk
             self.client = qianfan.ChatCompletion(model=self.args.gpt_version)
         elif self.args.api_type == "llama":
-            self.client = OpenAI(base_url='http://localhost:11434/v1',api_key='ollama')
+            # Ollma specifics
+            stop_token = "<|im_end|>"
+            
+            # Set up the chat object using the Ollma local deployment URL
+            self.chat = ChatOpenAI(
+                openai_api_key='EMPTY',  # Since Ollma is local, API key may not be needed
+                base_url=f'http://localhost:11434/v1',  # Use the local URL for Ollma
+                model_name='llama3.1',
+                model_kwargs={"stop": [stop_token]}
+            )
+
+            # Set up the client for interacting with Ollma
+            self.client = OpenAI(
+                api_key='EMPTY',  # Not needed for local Ollma
+                base_url=f'http://localhost:11434/v1',
+            )
+
 
         self.distiller = distiller
         self.fewshot_example_initialization(args.prompt_level, args.prompt_path, distiller = self.distiller)

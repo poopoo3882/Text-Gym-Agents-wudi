@@ -77,12 +77,15 @@ class EXE(NaiveAct):
         self.env_history.reset()
         
     def _read_mem(self, ):
-        insight_str = ""
-        if self.insight:
-            insight_str += "The insights of the game are listed below: "
-            insight_str += f"{self.insight}\n"
-        suggestion_str = "The suggestions are listed below:" + self.pre_memory[-1]
-        return insight_str + suggestion_str 
+        try:
+            insight_str = ""
+            if self.insight:
+                insight_str += "The insights of the game are listed below: "
+                insight_str += f"{self.insight}\n"
+            suggestion_str = "The suggestions are listed below:" + self.pre_memory[-1][0]
+            return insight_str + suggestion_str 
+        except:
+            return ""
     
     def act(
         self,
@@ -102,15 +105,36 @@ class EXE(NaiveAct):
             "Your response should choose an optimal action from valid action list, and terminated with following format: "        
             # only task relevant examplesA
         template = "Now you are completing a task."
-        template += "You need to carefully understand the description of the game. " 
+        template += "You need to carefully understand the description of the game. "
+
         # TODO: few shot example handle
         if self.irr_few_shot_examples:
             template += "Here are some examples of how you should completing a task."
             for examples in self.irr_few_shot_examples:
                 template += "\nQuestion: \n" + examples['question'] + "Answer: \n" + examples['answer']
         
-        template += "\n\nNow you are in the task.\n" 
-        template += " {game_description}\n{action_description}\n{goal_description}"
+        # add game manual or RL traj
+        # prompt level 6: game manual
+        if self.args.prompt_level == 6:
+            manual_prompt = f"You are in a task. {game_description}\n {goal_description} \n\n This is the game manual for this game. You need to read it carefully and understand the content and play strategies of the game: \n\n\n {self.game_manual}"
+            manual_prompt = manual_prompt.replace("{", "{{")
+            manual_prompt = manual_prompt.replace("}", "}}")
+            template += manual_prompt
+        # prompt level 7: RL traj
+        elif self.args.prompt_level == 7:
+            formatted_list = [f"[{item}]" for item in self.language_traj_list]
+            traj_str =  "\n".join(formatted_list)
+            traj_prompt = f"You are in a task. {game_description}\n {goal_description} \n\nThis is the trajectory of playing this game using the RL algorithm. Please read these trajectories carefully and refer to these trajectories to make decisions during the game play:\n\n\n {traj_str} "
+            traj_prompt = traj_prompt.replace("{", "{{")
+            traj_prompt = traj_prompt.replace("}", "}}")
+            template += traj_prompt
+
+        else:
+            template += "\n\nNow you are in the task.\n" 
+            template += f" {game_description}\n{action_description}\n{goal_description}"
+
+
+
         template += "You are observing something and  " \
                 "you need to choose the optimal action acoordingly."
         template += 'Response and interact using the format: {reply_format_description}{format_instructions}\n'
@@ -118,7 +142,7 @@ class EXE(NaiveAct):
         template += self._read_mem()
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
         
-        short_memory_template = HumanMessagePromptTemplate.from_template("{history}\nNext is the observation that the agent gets:\n{state_description}Please select an optimal action to gain higher rewards based on the current state and history. The action description is below: {action_description}. Please think step by step.")
+        short_memory_template = HumanMessagePromptTemplate.from_template("{history}\nNext is the observation that the agent gets:\n{state_description}Please select an optimal action to gain higher rewards based on the current state and history. The action description is below: {action_description}. Please think step by step. Note: Please Response and interact using the format: {reply_format_description}{format_instructions}\n")
         chat_prompt = ChatPromptTemplate.from_messages(
             [system_message_prompt, short_memory_template])
         if self.logger:
@@ -142,7 +166,6 @@ class EXE(NaiveAct):
                 history=self.env_history.get_histories(self.mem_num),
                 format_instructions=self.parser.get_format_instructions(),
                 reply_format_description=reply_format_description,
-                max_token=self.max_tokens
             )
 
             total_tokens += cb.total_tokens
