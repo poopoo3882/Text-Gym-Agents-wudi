@@ -80,7 +80,7 @@ def evaluate_translator(translator, environment, decider, max_episode_len, logfi
     end_time = time.time()
     elapsed_time = end_time - start_time
     elapsed_time = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
-    experiment_name = f'{args.env_name}-{args.decider}-prompt_level{args.prompt_level}-{args.max_episode_len}'
+    experiment_name = f'{args.env_name}-{args.decider}-prompt_level{args.prompt_level}-seed{args.seed}-{args.max_episode_len}'
     
 
     # 记录结果到 result.csv 文件
