@@ -215,8 +215,8 @@ def get_chat(client, messages: list, api_type: str = "azure", model: str = "gpt-
             )
     elif api_type in ['llama']:
         llm = ChatOpenAI(base_url='http://localhost:11434/v1',api_key='ollama',model='llama3.1')
-        usage={'token': 0, 'cost': 0}
         response = llm.invoke(messages)
+        usage={'token': response.response_metadata['token_usage']['total_tokens'], 'cost': 0}
         response=response.content
         return response, usage
 

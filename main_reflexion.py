@@ -51,6 +51,7 @@ def evaluate_translator(translator, environment, decider, max_episode_len, logfi
     start_datetime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     utilities = []
+    tokens = []
     seeds = [i for i in range(1000)]
     # prompt_file = "prompt.txt"
     # f = open(prompt_file,"w+")
@@ -65,8 +66,9 @@ def evaluate_translator(translator, environment, decider, max_episode_len, logfi
                 seed = seeds[curriculum*curriculums + num_trails - trail - 1]
             else:
                 seed = args.seed
-            utility = _run(translator, environment, decider, max_episode_len, logfile, args, trail, seed) 
+            utility, token = _run(translator, environment, decider, max_episode_len, logfile, args, trail, seed) 
             utilities.append(utility)
+            tokens.append(token)
             # TODO: set env sucess utility threshold
             if trail < num_trails -1:
                 if args.decider in ['reflexion']:
@@ -87,6 +89,7 @@ def evaluate_translator(translator, environment, decider, max_episode_len, logfi
     result_row = [
         experiment_name,       # 实验id
         utilities,             # 实验结果
+        tokens,                # 所用token
         start_datetime,        # 实验开始时间
         elapsed_time           # 实验运行时长
     ]
@@ -203,7 +206,7 @@ def _run(translator, environment, decider, max_episode_len, logfile, args, trail
         end_time = datetime.datetime.now()
         time_diff = end_time - start_time
         logger.info(f"Time consumer: {time_diff.total_seconds()} s")
-    return utility
+    return utility, current_total_tokens
 
 
 if __name__ == "__main__":
