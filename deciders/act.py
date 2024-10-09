@@ -43,7 +43,7 @@ class NaiveAct(gpt):
         self.cum_cost_usage = 0
         self.prompt_level = args.prompt_level
         # load manual 
-        manual_data = pd.read_csv(args.base_path + 'manual/game_manual_new.csv')
+        manual_data = pd.read_csv(args.base_path + 'manual/game_manual_new.csv', encoding='Windows-1252')
         self.game_manual = manual_data.loc[manual_data['Name'] == args.manual_name, 'Website'].values[0]
 
         # load language traj

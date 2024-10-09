@@ -94,7 +94,7 @@ def evaluate_translator(translator, environment, decider, max_episode_len, logfi
         elapsed_time           # 实验运行时长
     ]
 
-    with open('result.csv', mode='a', newline='') as file:
+    with open('testall_result.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(result_row)
     return utilities            
@@ -356,7 +356,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--traj_path",
         type=str,
-        default='pong_language_traj_0912.pkl',
+        default='Pong_language_traj_0912.pkl',
         help="the path of language traj (prompt level 7)"
     )
     parser.add_argument(
