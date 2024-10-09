@@ -332,7 +332,7 @@ if __name__ == "__main__":
         "--api_type",
         type=str,
         default="openai",
-        choices=["azure", "openai", "vllm", "qwen", "aistudio", "groq", "nvidia", "llama"],
+        choices=["azure", "openai", "vllm", "qwen", "aistudio", "groq", "nvidia", "llama","gemma","qwen7b"],
         help="choose api type, now support azure and openai"
     )
     parser.add_argument(
@@ -362,7 +362,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--base_path",
         type=str,
-        default='/home/wudi/Text-Gym-Agents-wudi/',
+        default='/home/wenwu/Text-Gym-Agents-master/',
         help="the absoulte path of root directory"
     )
     
