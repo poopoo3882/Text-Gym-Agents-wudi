@@ -362,7 +362,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--base_path",
         type=str,
-        default='/home/wudi/Text-Gym-Agents-wudi/',
+        default='/home/wenwu/Text-Gym-Agents-master/',
         help="the absoulte path of root directory"
     )
     

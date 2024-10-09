@@ -29,6 +29,62 @@ class RandomAct():
         else:
             action = self.action_space.sample()
         return action, '', '', '', 0, 0
+    
+class ActionProcessor:
+    def __init__(self, prompt_level):
+        self.prompt_level = prompt_level
+        # 名词映射为 "item"
+        self.noun_to_item_dict = {
+           "fruit": "item",  # 水果
+            "ghost": "item",  # 幽灵
+            "missiles": "item",  # 导弹
+            "asteroids": "item",  # 小行星
+            "tank": "item",  # 坦克
+            "missile": "item",  # 导弹
+            "compass": "item",  # 指南针
+            "tread": "item",  # 履带
+            "crosshairs": "item",  # 十字准线
+            "robot": "item",  # 机器人
+            "evilOtto": "item",  # 邪恶奥托
+            "ball": "item",  # 球
+            "pins": "item",  # 球瓶
+            "opponent": "item",  # 对手
+            "block": "item",  # 方块
+            "enemy": "item",  # 敌人
+            "car": "item",  # 汽车
+            "igloo": "item",  # 冰屋
+            "iceflow": "item",  # 冰流
+            "bear": "item",  # 熊
+            "dynamite": "item",  # 炸药
+            "skull": "item",  # 骷髅
+            "key": "item",  # 钥匙
+            "Sue": "item",  # 幽灵名字
+            "Inky": "item",  # 幽灵名字
+            "Pinky": "item",  # 幽灵名字
+            "Blinky": "item",  # 幽灵名字
+            "log": "item",  # 原木
+            "scorpion": "item",  # 蝎子
+            "rope": "item",  # 绳子
+            "player": "item",  # 玩家
+            "dove": "item",  # 鸽子
+            "red enemy": "item",  # 红色敌人
+            "green enemy": "item",  # 绿色敌人
+            "fuel": "item",  # 燃料
+            "oxygen meter": "item",  # 氧气表
+            "diver": "item",  # 潜水员
+            "invaders": "item",  # 入侵者
+            "sprite": "item",  # 精灵
+            "paddle": "item"  # 球拍
+        }
+
+    def process_prompt(self, description):
+        # 仅在 prompt level = 8 时进行模糊化
+        if self.prompt_level == 8:
+            words = description.split()
+            # 使用字典进行名词映射
+            converted_words = [self.noun_to_item_dict.get(word, word) for word in words]
+            return " ".join(converted_words)
+        return description
 
 class NaiveAct(gpt):
     def __init__(self, action_space, args, prompts, distiller, temperature=0.0, max_tokens=2048, logger=None):
@@ -256,7 +312,7 @@ class NaiveAct(gpt):
         self.irr_few_shot_examples = []
         self.prompt_level = level
         self.expert_knowledge = None
-        if level in [1,3,6,7]:
+        if level in [1,3,6,7,8]:
             self.irr_few_shot_examples = self.prompts.TASK_IRRELEVANT_PROMPTS
         elif level == 5:
             if hasattr(self.prompts, "expert_prompt"):
@@ -331,6 +387,11 @@ class NaiveAct(gpt):
             traj_prompt = f"You are in a game. {game_description}\n {goal_description} \n\nThis is the trajectory of playing this game using the RL algorithm. Please read these trajectories carefully and refer to these trajectories to make decisions during the game play:\n\n\n {traj_str} "
             example_messages.append({"role": "system", "name":"example_user",  "content": traj_prompt})
     
+        if self.args.prompt_level == 8:
+    # 仅对目标和动作描述进行模糊化，而不对游戏描述模糊化
+            prompt_processor = ActionProcessor(prompt_level=self.args.prompt_level)
+            state_description = prompt_processor.process_prompt(state_description)
+
         if self.args.prompt_level == 5:    
             if self.fewshot_example:
                 for examples in self.fewshot_example:
