@@ -51,7 +51,6 @@ class ActionProcessor:
             "log": "item",  # 原木
             "scorpion": "item",  # 蝎子
             "rope": "item",  # 绳子
-            "player": "item",  # 玩家
             "dove": "item",  # 鸽子
             "red enemy": "item",  # 红色敌人
             "green enemy": "item",  # 绿色敌人

@@ -192,6 +192,41 @@ class NaiveAct(gpt):
                 base_url=f'http://localhost:11434/v1',
             )
 
+        elif self.args.api_type == "qwen7b":
+            # Ollma specifics
+            stop_token = "<|im_end|>"
+            
+            # Set up the chat object using the Ollma local deployment URL
+            self.chat = ChatOpenAI(
+                openai_api_key='EMPTY',  # Since Ollma is local, API key may not be needed
+                base_url=f'http://localhost:11434/v1',  # Use the local URL for Ollma
+                model_name='qwen2.5:7b',
+                model_kwargs={"stop": [stop_token]}
+            )
+
+            # Set up the client for interacting with Ollma
+            self.client = OpenAI(
+                api_key='EMPTY',  # Not needed for local Ollma
+                base_url=f'http://localhost:11434/v1',
+            )
+        elif self.args.api_type == "gemma":
+            # Ollma specifics
+            stop_token = "<|im_end|>"
+            
+            # Set up the chat object using the Ollma local deployment URL
+            self.chat = ChatOpenAI(
+                openai_api_key='EMPTY',  # Since Ollma is local, API key may not be needed
+                base_url=f'http://localhost:11434/v1',  # Use the local URL for Ollma
+                model_name='gemma:7b',
+                model_kwargs={"stop": [stop_token]}
+            )
+
+            # Set up the client for interacting with Ollma
+            self.client = OpenAI(
+                api_key='EMPTY',  # Not needed for local Ollma
+                base_url=f'http://localhost:11434/v1',
+            )
+
 
         self.distiller = distiller
         self.fewshot_example_initialization(args.prompt_level, args.prompt_path, distiller = self.distiller)
@@ -302,6 +337,10 @@ class NaiveAct(gpt):
             autofixing_chat = QianfanChatEndpoint(temperature=max(self.temperature, 1e-5), model=self.args.gpt_version, qianfan_ak=openai.qianfan_ak, qianfan_sk=openai.qianfan_sk)
         elif self.args.api_type == "llama":
             autofixing_chat = ChatOpenAI(base_url='http://localhost:11434/v1',api_key='ollama',model='llama3.1')
+        elif self.args.api_type == "qwen7b":
+            autofixing_chat = ChatOpenAI(base_url='http://localhost:11434/v1',api_key='ollama',model='qwen2.5:7b')
+        elif self.args.api_type == "gemma":
+            autofixing_chat = ChatOpenAI(base_url='http://localhost:11434/v1',api_key='ollama',model='gemma:7b')
         parser = PydanticOutputParser(pydantic_object=PARSERS[num_action])
         autofixing_parser = OutputFixingParser.from_llm(
             llm=autofixing_chat, parser=parser)
