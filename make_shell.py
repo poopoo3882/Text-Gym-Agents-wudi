@@ -38,38 +38,38 @@ for i in range(8):
             traj_path = f"{game}_language_traj_0929.pkl"
             decider_naive = "naive_actor"
             decider_cot = "cot_actor"
-        
-            # 写入 manual naive 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_naive, 6, 1, seed, manual_name,api_type='qwen7b') + '\n')
 
-            # 写入 manual cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 6, 5, seed, manual_name,api_type='qwen7b') + '\n')
-
-            # 写入 RL traj naive 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_naive, 7, 1, seed, manual_name, traj_path,api_type='qwen7b') + '\n')
-
-            # 写入 RL traj cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 7, 5, seed, manual_name, traj_path,api_type='qwen7b') + '\n')
-            
             # 写入 basic naive 模式下的命令
-            for seed in range(5):
+            for seed in range(4):
                 f.write(generate_command(decider_naive, 1, 1, seed, manual_name,api_type='qwen7b') + '\n')
 
             # 写入 basic cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 1, 5, seed, manual_name,api_type='qwen7b') + '\n')
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 1, 3, seed, manual_name,api_type='qwen7b') + '\n')
+        
+            # 写入 manual naive 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_naive, 6, 1, seed, manual_name,api_type='qwen7b') + '\n')
+
+            # 写入 manual cot 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 6, 3, seed, manual_name,api_type='qwen7b') + '\n')
+
+            # 写入 RL traj naive 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_naive, 7, 1, seed, manual_name, traj_path,api_type='qwen7b') + '\n')
+
+            # 写入 RL traj cot 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 7, 3, seed, manual_name, traj_path,api_type='qwen7b') + '\n')
             
             # 写入 obscure naive 模式下的命令
-            for seed in range(5):
+            for seed in range(4):
                 f.write(generate_command(decider_naive, 8, 1, seed, manual_name,api_type='qwen7b') + '\n')
 
             # 写入 obscure cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 8, 5, seed, manual_name,api_type='qwen7b') + '\n')
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 8, 3, seed, manual_name,api_type='qwen7b') + '\n')
             
     with open(f'/home/wudi/Text-Gym-Agents-wudi/run_shell/llama/run_llama_{i}.sh', 'w') as f:
         for game in sub_list:
@@ -80,38 +80,38 @@ for i in range(8):
             traj_path = f"{game}_language_traj_0929.pkl"
             decider_naive = "naive_actor"
             decider_cot = "cot_actor"
-        
-            # 写入 manual naive 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_naive, 6, 1, seed, manual_name,api_type='llama') + '\n')
 
-            # 写入 manual cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 6, 5, seed, manual_name,api_type='llama') + '\n')
-
-            # 写入 RL traj naive 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_naive, 7, 1, seed, manual_name, traj_path,api_type='llama') + '\n')
-
-            # 写入 RL traj cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 7, 5, seed, manual_name, traj_path,api_type='llama') + '\n')
-            
             # 写入 basic naive 模式下的命令
-            for seed in range(5):
+            for seed in range(4):
                 f.write(generate_command(decider_naive, 1, 1, seed, manual_name,api_type='llama') + '\n')
 
             # 写入 basic cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 1, 5, seed, manual_name,api_type='llama') + '\n')
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 1, 3, seed, manual_name,api_type='llama') + '\n')
+        
+            # 写入 manual naive 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_naive, 6, 1, seed, manual_name,api_type='llama') + '\n')
+
+            # 写入 manual cot 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 6, 3, seed, manual_name,api_type='llama') + '\n')
+
+            # 写入 RL traj naive 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_naive, 7, 1, seed, manual_name, traj_path,api_type='llama') + '\n')
+
+            # 写入 RL traj cot 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 7, 3, seed, manual_name, traj_path,api_type='llama') + '\n')
             
             # 写入 obscure naive 模式下的命令
-            for seed in range(5):
+            for seed in range(4):
                 f.write(generate_command(decider_naive, 8, 1, seed, manual_name,api_type='llama') + '\n')
 
             # 写入 obscure cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 8, 5, seed, manual_name,api_type='llama') + '\n')
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 8, 3, seed, manual_name,api_type='llama') + '\n')
             
     with open(f'/home/wudi/Text-Gym-Agents-wudi/run_shell/gemma/run_gemma_{i}.sh', 'w') as f:
         for game in sub_list:
@@ -122,36 +122,35 @@ for i in range(8):
             traj_path = f"{game}_language_traj_0929.pkl"
             decider_naive = "naive_actor"
             decider_cot = "cot_actor"
-        
-            # 写入 manual naive 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_naive, 6, 1, seed, manual_name,api_type='gemma') + '\n')
-
-            # 写入 manual cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 6, 5, seed, manual_name,api_type='gemma') + '\n')
-
-            # 写入 RL traj naive 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_naive, 7, 1, seed, manual_name, traj_path,api_type='gemma') + '\n')
-
-            # 写入 RL traj cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 7, 5, seed, manual_name, traj_path,api_type='gemma') + '\n')
-            
             # 写入 basic naive 模式下的命令
-            for seed in range(5):
+            for seed in range(4):
                 f.write(generate_command(decider_naive, 1, 1, seed, manual_name,api_type='gemma') + '\n')
 
             # 写入 basic cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 1, 5, seed, manual_name,api_type='gemma') + '\n')
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 1, 3, seed, manual_name,api_type='gemma') + '\n')
+        
+            # 写入 manual naive 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_naive, 6, 1, seed, manual_name,api_type='gemma') + '\n')
+
+            # 写入 manual cot 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 6, 3, seed, manual_name,api_type='gemma') + '\n')
+
+            # 写入 RL traj naive 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_naive, 7, 1, seed, manual_name, traj_path,api_type='gemma') + '\n')
+
+            # 写入 RL traj cot 模式下的命令
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 7, 3, seed, manual_name, traj_path,api_type='gemma') + '\n')
             
             # 写入 obscure naive 模式下的命令
-            for seed in range(5):
+            for seed in range(4):
                 f.write(generate_command(decider_naive, 8, 1, seed, manual_name,api_type='gemma') + '\n')
 
             # 写入 obscure cot 模式下的命令
-            for seed in range(5):
-                f.write(generate_command(decider_cot, 8, 5, seed, manual_name,api_type='gemma') + '\n')
+            for seed in range(4):
+                f.write(generate_command(decider_cot, 8, 3, seed, manual_name,api_type='gemma') + '\n')
             
