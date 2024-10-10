@@ -19,6 +19,7 @@ from openai import OpenAI
 from .utils import run_chain, get_chat, num_tokens_from_string
 from gym.spaces import Discrete
 
+
 class RandomAct():
     def __init__(self, action_space):
         self.action_space = action_space
@@ -181,7 +182,7 @@ class NaiveAct(gpt):
             # Set up the chat object using the Ollma local deployment URL
             self.chat = ChatOpenAI(
                 openai_api_key='EMPTY',  # Since Ollma is local, API key may not be needed
-                base_url=f'http://localhost:11435/v1',  # Use the local URL for Ollma
+                base_url=f'http://localhost:{self.args.port}/v1',  # Use the local URL for Ollma
                 model_name='llama3.1',
                 model_kwargs={"stop": [stop_token]}
             )
@@ -189,7 +190,7 @@ class NaiveAct(gpt):
             # Set up the client for interacting with Ollma
             self.client = OpenAI(
                 api_key='EMPTY',  # Not needed for local Ollma
-                base_url=f'http://localhost:11435/v1',
+                base_url=f'http://localhost:{self.args.port}/v1',
             )
 
         elif self.args.api_type == "qwen7b":
@@ -199,7 +200,7 @@ class NaiveAct(gpt):
             # Set up the chat object using the Ollma local deployment URL
             self.chat = ChatOpenAI(
                 openai_api_key='EMPTY',  # Since Ollma is local, API key may not be needed
-                base_url=f'http://localhost:11435/v1',  # Use the local URL for Ollma
+                base_url=f'http://localhost:{self.args.port}/v1',  # Use the local URL for Ollma
                 model_name='qwen2.5:7b',
                 model_kwargs={"stop": [stop_token]}
             )
@@ -207,7 +208,7 @@ class NaiveAct(gpt):
             # Set up the client for interacting with Ollma
             self.client = OpenAI(
                 api_key='EMPTY',  # Not needed for local Ollma
-                base_url=f'http://localhost:11435/v1',
+                base_url=f'http://localhost:{self.args.port}/v1',
             )
         elif self.args.api_type == "gemma":
             # Ollma specifics
@@ -216,7 +217,7 @@ class NaiveAct(gpt):
             # Set up the chat object using the Ollma local deployment URL
             self.chat = ChatOpenAI(
                 openai_api_key='EMPTY',  # Since Ollma is local, API key may not be needed
-                base_url=f'http://localhost:11435/v1',  # Use the local URL for Ollma
+                base_url=f'http://localhost:{self.args.port}/v1',  # Use the local URL for Ollma
                 model_name='gemma:7b',
                 model_kwargs={"stop": [stop_token]}
             )
@@ -224,7 +225,7 @@ class NaiveAct(gpt):
             # Set up the client for interacting with Ollma
             self.client = OpenAI(
                 api_key='EMPTY',  # Not needed for local Ollma
-                base_url=f'http://localhost:11435/v1',
+                base_url=f'http://localhost:{self.args.port}/v1',
             )
 
 
@@ -336,11 +337,11 @@ class NaiveAct(gpt):
         elif self.args.api_type == "aistudio":
             autofixing_chat = QianfanChatEndpoint(temperature=max(self.temperature, 1e-5), model=self.args.gpt_version, qianfan_ak=openai.qianfan_ak, qianfan_sk=openai.qianfan_sk)
         elif self.args.api_type == "llama":
-            autofixing_chat = ChatOpenAI(base_url='http://localhost:11435/v1',api_key='ollama',model='llama3.1')
+            autofixing_chat = ChatOpenAI(base_url=f'http://localhost:{self.args.port}/v1',api_key='ollama',model='llama3.1')
         elif self.args.api_type == "qwen7b":
-            autofixing_chat = ChatOpenAI(base_url='http://localhost:11435/v1',api_key='ollama',model='qwen2.5:7b')
+            autofixing_chat = ChatOpenAI(base_url=f'http://localhost:{self.args.port}/v1',api_key='ollama',model='qwen2.5:7b')
         elif self.args.api_type == "gemma":
-            autofixing_chat = ChatOpenAI(base_url='http://localhost:11435/v1',api_key='ollama',model='gemma:7b')
+            autofixing_chat = ChatOpenAI(base_url=f'http://localhost:{self.args.port}/v1',api_key='ollama',model='gemma:7b')
         parser = PydanticOutputParser(pydantic_object=PARSERS[num_action])
         autofixing_parser = OutputFixingParser.from_llm(
             llm=autofixing_chat, parser=parser)
