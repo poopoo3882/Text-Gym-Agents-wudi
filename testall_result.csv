@@ -438,3 +438,4 @@ RepresentedSpaceInvaders-v0-cot_actor-prompt_level7-seed1-4,"[0.0, 0.0, 0.0, 0.0
 RepresentedSpaceInvaders-v0-cot_actor-prompt_level7-seed2-4,"[0.0, 0.0, 0.0, 0.0, 0.0]","[6410, 6820, 6392, 6432, 5776]",2024-10-09 12:02:48,00:01:21
 RepresentedSpaceInvaders-v0-cot_actor-prompt_level7-seed3-4,"[0.0, 0.0, 0.0, 0.0, 0.0]","[6246, 7720, 5580, 6232, 6134]",2024-10-09 12:04:12,00:01:21
 RepresentedSpaceInvaders-v0-cot_actor-prompt_level7-seed4-4,"[0.0, 0.0, 0.0, 0.0, 0.0]","[5762, 6510, 6600, 8030, 6404]",2024-10-09 12:05:38,00:01:28
+RepresentedMsPacman-v0-cot_actor-llama-prompt_level8-seed2-1000,"[360.0, 380.0, 290.0, 560.0, 170.0]","[647784, 733434, 619162, 783954, 628636]",2024-10-09 19:03:16,02:00:28

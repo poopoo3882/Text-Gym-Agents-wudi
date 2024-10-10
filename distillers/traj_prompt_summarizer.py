@@ -2,13 +2,16 @@ import random
 from deciders.utils import get_chat, num_tokens_from_string
 import json
 from loguru import logger
+import os
 
 
 class TrajPromptSummarizer():
     def __init__(self,args=None,logfile=None):
         self.args = args
         self.seed = args.seed
-        with open("/home/wenwu/Text-Gym-Agents-master/distillers/traj_summary_few_shot_examples.txt", 'r') as f:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(script_dir)
+        with open("./traj_summary_few_shot_examples.txt", 'r') as f:
             self.FEW_SHOT_EXAMPLES = f.read()
         
         if logfile:

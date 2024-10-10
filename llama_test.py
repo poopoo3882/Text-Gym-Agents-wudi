@@ -1,7 +1,7 @@
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
 
-llm = ChatOpenAI(base_url='http://localhost:11434/v1',api_key='ollama',model='llama3.1')
+llm = ChatOpenAI(base_url='http://10.60.45.81:11435/v1',api_key='ollama',model='llama3')
 usage={'token': 0, 'cost': 0}
 messages = []
 messages.append({"role": "user",  "content":"hello!"})

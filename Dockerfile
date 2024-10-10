@@ -26,15 +26,18 @@ RUN echo "source activate llm-gym" > ~/.bashrc
 ENV PATH=/opt/conda/envs/llm-gym/bin:$PATH
 
 # 安装额外的依赖项（通过pip）
-# 安装额外的依赖项（通过pip）
 RUN /opt/conda/envs/llm-gym/bin/pip install -e /wenwu/atari-representation-learning
 
 
-# 暴露必要端口（例如用于API或Web应用）
-EXPOSE 8000
+# # 暴露必要端口（例如用于API或Web应用）
+# EXPOSE 8000
+# EXPOSE 11434
 
-# 设置默认环境变量，可以通过docker run -e来覆盖
-ENV ENVIRONMENT=RepresentedMsPacman-v0 MODEL_PATH=default INIT_SUMMARIZER=RepresentedMsPacman_init_translator PROMPT_LEVEL=1 AGENT=cot_actor API_TYPE=llama
+ENV RUN_SHELL_FILE=gemma/run_Bowling_2.sh
+
+RUN chmod +x /wenwu/run_shell/llama/*.sh
+RUN chmod +x /wenwu/run_shell/gemma/*.sh
+RUN chmod +x /wenwu/run_shell/qwen/*.sh
 
 # 运行Python脚本并传递参数
-CMD ["sh", "-c", "python main_reflexion.py --env_name $ENVIRONMENT --init_summarizer $INIT_SUMMARIZER --curr_summarizer RepresentedMsPacman_basic_translator --decider $AGENT --prompt_level $PROMPT_LEVEL --num_trails 5 --distiller traj_distiller --seed 0 --manual_name MsPacman --use_short_mem 0 --max_episode_len 1000 --api_type $API_TYPE"]
+CMD ["sh", "-c", "/wenwu/run_shell/${RUN_SHELL_FILE}"]

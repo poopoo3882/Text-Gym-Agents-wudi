@@ -263,4 +263,3 @@ dependencies:
       - xformers==0.0.23.post1
       - yarl==1.9.2
       - zipp==3.15.0
-      - git+ssh://git@github.com/hyyh28/atari-representation-learning.git

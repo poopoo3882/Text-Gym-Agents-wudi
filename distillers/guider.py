@@ -8,7 +8,7 @@ class Guidance_Generator():
     def __init__(self,logfile="",args=None):
         self.args = args
         self.seed = args.seed
-        with open("/home/wenwu/Text-Gym-Agents-master/distillers/guidance_summary_few_shot_examples.txt", 'r') as f:
+        with open("/wenwu/Text-Gym-Agents-master/distillers/guidance_summary_few_shot_examples.txt", 'r') as f:
             self.SUMMARY_FEW_SHOT_EXAMPLES = f.read()
         self.insight = ""
         self.suggestion = ""
