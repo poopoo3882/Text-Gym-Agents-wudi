@@ -8,7 +8,7 @@ class TrajPromptSummarizer():
     def __init__(self,args=None,logfile=None):
         self.args = args
         self.seed = args.seed
-        with open("/home/wenwu/Text-Gym-Agents-master/distillers/traj_summary_few_shot_examples.txt", 'r') as f:
+        with open("/home/wudi/Text-Gym-Agents-master/distillers/traj_summary_few_shot_examples.txt", 'r') as f:
             self.FEW_SHOT_EXAMPLES = f.read()
         
         if logfile:

@@ -348,6 +348,12 @@ if __name__ == "__main__":
         help="the api port of vllm"
     )
     parser.add_argument(
+        "--gpu",
+        type=int,
+        default=0,
+        help="the gpu index"
+    )
+    parser.add_argument(
         "--manual_name",
         type=str,
         default='Pong',
@@ -362,11 +368,20 @@ if __name__ == "__main__":
     parser.add_argument(
         "--base_path",
         type=str,
-        default='/home/wenwu/Text-Gym-Agents-master/',
+        default='/home/wudi/Text-Gym-Agents-wudi/',
         help="the absoulte path of root directory"
     )
     
     args = parser.parse_args()
+
+    #  make port
+    port_mapping = {
+            "llama": 11400,     # 初始端口值
+            "qwen7b": 11408,    # 初始端口值
+            "gemma": 11416      # 初始端口值
+        }
+    model_type = args.api_type
+    args.port = port_mapping[model_type] + (args.gpu % 8) 
     
     # Please note when using "azure", the model name is gpt-35-turbo while using "openai", the model name is "gpt-3.5-turbo"
     if args.api_type == "azure":
